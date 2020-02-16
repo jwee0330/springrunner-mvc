@@ -25,5 +25,5 @@ public interface UserRepository {
      * @return 저장된 사용자 개체
      */
     User save(User user);
-
+    
 }
