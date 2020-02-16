@@ -51,12 +51,14 @@ public class UserRestController {
 		User savedUser = changer.change(session.getUser().getUsername(), newProfilePicture);
 		
 		sessionRepository.set(new UserSession(savedUser));
-		
 		return new UserProfile(session.getUser());
 	}
 	
 	@GetMapping("/user/profile-picture")
 	public Resource profilePicture(UserSession session) {
+		// 1. 사용자 프로필 이미지를 불러온다.
+		//		-> session.getUser().getProfilePicture() + ProfileStorage
+		// 2. 프로필 이미지를 응답한다.
 		URI uri = session.getUser().getProfilePicture().getUri();
 		return storage.load(uri); 
 	}

@@ -6,4 +6,4 @@ site:
   author: jayden
   toggles:
     auth: true
-    onlineUsersCounter: false
+    onlineUsersCounter: true
