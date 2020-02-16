@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
@@ -18,6 +19,7 @@ import todoapp.commons.web.error.ReadableErrorAttributes;
 import todoapp.commons.web.view.CommaSeparatedValuesView;
 import todoapp.security.UserSessionRepository;
 import todoapp.security.web.method.UserSessionHandlerMethodArgumentResolver;
+import todoapp.security.web.servlet.RolesVerifyHandlerInterceptor;
 
 /**
  * Spring Web MVC 설정
@@ -30,6 +32,11 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 	
     public WebMvcConfiguration(UserSessionRepository sessionRepository) {
 		this.sessionRepository = sessionRepository;
+	}
+
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {		// TODO Auto-generated method stub
+		registry.addInterceptor(new RolesVerifyHandlerInterceptor(sessionRepository));
 	}
 
 	@Override
