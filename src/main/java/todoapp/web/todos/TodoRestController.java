@@ -2,6 +2,7 @@ package todoapp.web.todos;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
@@ -21,7 +22,9 @@ import org.springframework.web.bind.annotation.RestController;
 import todoapp.core.todos.application.TodoEditor;
 import todoapp.core.todos.application.TodoFinder;
 import todoapp.core.todos.domain.Todo;
+import todoapp.security.UserSession;
 
+@RolesAllowed(UserSession.ROLE_USER)
 @RestController
 public class TodoRestController {
 	private final Logger logger = LoggerFactory.getLogger(getClass());

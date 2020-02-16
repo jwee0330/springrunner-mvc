@@ -2,6 +2,7 @@ package todoapp.security.web.servlet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -38,8 +39,8 @@ public class RolesVerifyHandlerInterceptor implements HandlerInterceptor, RolesA
 	@Override
     public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
     	if (handler instanceof HandlerMethod) {
-    		RolesAllowed rolesAllowed = ((HandlerMethod) handler)
-    				.getMethodAnnotation(RolesAllowed.class);
+    		// 1. 핸들러 메소드에서 찾아보
+    		RolesAllowed rolesAllowed = getRolesAllowed(handler);
     		
     		// 웹 요청을 보호할 필요가 있다면... (즉, 애노테이션 있다면...)
     		if (Objects.nonNull(rolesAllowed)) {
