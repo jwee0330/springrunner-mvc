@@ -22,6 +22,5 @@ public class LogoutController {
 		sessionRepository.clear();
 		return "redirect:/todos";
 	}
-	
 
 }
