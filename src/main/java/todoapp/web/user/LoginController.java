@@ -1,14 +1,21 @@
 package todoapp.web.user;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import todoapp.core.user.application.UserJoinder;
 import todoapp.core.user.application.UserPasswordVerifier;
 import todoapp.core.user.domain.UserEntityNotFoundException;
+import todoapp.core.user.domain.UserPasswordNotMatchedException;
 
 @Controller
 public class LoginController {
@@ -28,9 +35,15 @@ public class LoginController {
 	}
 	
 	@PostMapping("/login")
-	public String loginProcess(LoginCommand loginCommand) {
+	public String loginProcess(@Valid LoginCommand loginCommand, BindingResult bindingResult, Model model) {
 		
 		log.info("username: {}, password: {}", loginCommand.getUsername(), loginCommand.getPassword());
+		
+		if (bindingResult.hasErrors()) {
+			model.addAttribute("bindingResult", bindingResult);
+			model.addAttribute("message", "사용자 입력 값이 올바르지 않습니다.");
+			return "login";
+		}
 		
 		try {
 			verifier.verify(loginCommand.getUsername(), loginCommand.getPassword());
@@ -41,8 +54,15 @@ public class LoginController {
 		return "redirect:/todos";
 	}
 	
+	@ExceptionHandler(UserPasswordNotMatchedException.class)
+	public String handleUserPasswordNotMatchedException(UserPasswordNotMatchedException error, Model model) {
+		model.addAttribute("message", "사용자 정보가 올바르지 않습니다.");
+		return "login";
+	}
+	
 	static class LoginCommand {
 		
+		@Size(min = 4, max = 20)
 		private String username;
 		private String password;
 		
