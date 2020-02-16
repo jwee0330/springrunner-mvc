@@ -16,6 +16,8 @@ import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 
 import todoapp.commons.web.error.ReadableErrorAttributes;
 import todoapp.commons.web.view.CommaSeparatedValuesView;
+import todoapp.security.UserSessionRepository;
+import todoapp.security.web.method.UserSessionHandlerMethodArgumentResolver;
 
 /**
  * Spring Web MVC 설정
@@ -24,14 +26,25 @@ import todoapp.commons.web.view.CommaSeparatedValuesView;
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
+	private UserSessionRepository sessionRepository;
+	
+    public WebMvcConfiguration(UserSessionRepository sessionRepository) {
+		this.sessionRepository = sessionRepository;
+	}
 
-    @Override
+	@Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         // registry.enableContentNegotiation();
         // 위와 같이 직접 설정하면, 스프링부트가 구성한 ContentNegotiatingViewResolver 전략이 무시된다.
     }
     
-    @Bean
+    @Override
+	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+		// TODO Auto-generated method stub
+		resolvers.add(new UserSessionHandlerMethodArgumentResolver(sessionRepository));
+	}
+
+	@Bean
     public ErrorAttributes errorAttributes(MessageSource messageSource) {
     	return new ReadableErrorAttributes(messageSource);
     }
