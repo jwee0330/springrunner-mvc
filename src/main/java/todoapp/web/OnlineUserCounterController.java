@@ -1,6 +1,7 @@
 package todoapp.web;
 
 import java.io.IOException;
+import java.util.stream.IntStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -22,20 +23,21 @@ public class OnlineUserCounterController {
         return broadcaster.subscribe();
     }
     
-//    @GetMapping("/stream/online-users-counter")
-//    public void oldCounter(HttpServletResponse response) {
-//    	response.setCharacterEncoding("utf-8");
-//    	response.setContentType("text/event-stream");
-//    	
-//    	try {
-//			ServletOutputStream outputStream = response.getOutputStream();
-//			
-//			response.getWriter();
-//			response.flushBuffer();
-//			
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//    }
+    @GetMapping("/stream/online-users-counter")
+    public void oldCounter(HttpServletResponse response) {
+    	response.setCharacterEncoding("utf-8");
+    	response.setContentType("text/event-stream");
+    
+    	IntStream.range(1, 10).forEach(number -> {
+    		try {
+    			Thread.sleep(1000);
+    			ServletOutputStream outputStream = response.getOutputStream();
+    			outputStream.write(("data: " + number + "\n\n").getBytes());
+    			outputStream.flush();
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    		}
+    	});
+    }
 }
