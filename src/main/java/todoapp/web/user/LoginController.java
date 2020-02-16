@@ -5,6 +5,7 @@ import javax.validation.constraints.Size;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +25,7 @@ public class LoginController {
 	
 	private UserJoinder joinder;
 	private UserPasswordVerifier verifier;
+	private MessageSource messageSource;
 	
 	public LoginController(UserJoinder joinder, UserPasswordVerifier verifier) {
 		this.joinder = joinder;
