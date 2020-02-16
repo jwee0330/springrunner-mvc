@@ -2,6 +2,8 @@ package todoapp.core.todos.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -15,6 +17,7 @@ public class Todo {
 
     @Id
     private Long id;
+    
     private String title;
     private TodoState state = TodoState.ACTIVE;
 
@@ -36,9 +39,9 @@ public class Todo {
     }
 
     private void setTitle(String title) {
-    	if (Objects.isNull(title) || title.length() < 4) {
-    		throw new TodoCreationException("할 일은 4자 이상이어야 합니다.");
-    	}
+//    	if (Objects.isNull(title) || title.length() < 4) {
+//    		throw new TodoCreationException("할 일은 4자 이상이어야 합니다.");
+//    	}
         this.title = title;
     }
 

@@ -9,13 +9,21 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.util.ClassUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import todoapp.commons.util.ThrowableUtils;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * 스프링부트에 기본 구현체인 {@link DefaultErrorAttributes}에 message 속성을 덮어쓰기 할 목적으로 작성한 컴포넌트이다.
@@ -48,16 +56,39 @@ public class ReadableErrorAttributes implements ErrorAttributes, HandlerExceptio
 
         // TODO attributes, error 을 사용해서 message 속성을 읽기 좋은 문구로 가공한다.
         // TODO ex) attributes.put("message", "문구");
-        if (ClassUtils.isAssignableValue(MessageSourceResolvable.class, error)) {
-        	String errorMessage = messageSource.getMessage((MessageSourceResolvable) error, webRequest.getLocale());
-        	attributes.put("message", errorMessage);
-        } else {
-        	String defaultMessage = (String) attributes.get("message");
-            String errorCode = String.format("Exception.%s", error.getClass().getSimpleName());
-            String errorMessage = messageSource.getMessage(errorCode, new Object[0], defaultMessage, webRequest.getLocale());  
-            attributes.put("message", errorMessage);
-        }
+        log.info("나는 일하고 있다.");
+        	
+        if (Objects.nonNull(error)) {
         
+	        if (MessageSourceResolvable.class.isAssignableFrom(error.getClass())) {
+	        	log.info("MessageSourceResolvable");
+	            String errorMessage = messageSource.getMessage((MessageSourceResolvable) error, webRequest.getLocale());
+	            attributes.put("message", errorMessage);
+	        } else {
+	            // Exception.MethodArgumentNotValidException
+	        	log.info("Exception.MethodArgumentNotValidException");
+	            String errorCode = String.format("Exception.%s", error.getClass().getSimpleName());
+	            String defaultMessage = error.getMessage();
+	            String errorMeesage = messageSource.getMessage(errorCode, new Object[0], defaultMessage,
+	                    webRequest.getLocale());
+	
+	            attributes.put("message", errorMeesage);
+	        }
+	
+	        // errors 속성 메시지를 사용자 친화적으로 변경하자
+	        BindingResult bindingResult = ThrowableUtils.extractBindingResult(error);
+	        if (Objects.nonNull(bindingResult)) {
+	            List<String> errors = bindingResult
+	                    .getAllErrors()
+	                    .stream()
+	                    .map(oe -> messageSource.getMessage(oe, webRequest.getLocale()))
+	                    .collect(Collectors.toList());
+	            
+	            log.info("errors: " + errors.get(0));
+	
+	            attributes.put("errors", errors);
+	        }
+        }
         
         return attributes;
     }

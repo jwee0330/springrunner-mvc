@@ -33,7 +33,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     
     @Bean
     public ErrorAttributes errorAttributes(MessageSource messageSource) {
-    	System.out.println("111111111");
     	return new ReadableErrorAttributes(messageSource);
     }
 

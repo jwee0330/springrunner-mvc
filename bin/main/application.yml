@@ -1,7 +1,9 @@
-site:
-  author: jayden
-
 logging.level:
   todoapp: DEBUG
   org.springframework.web: DEBUG
   org.springframework.boot: INFO
+site:
+  author: jayden
+  toggles:
+    auth: true
+    onlineUsersCounter: false
