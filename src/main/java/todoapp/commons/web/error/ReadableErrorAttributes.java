@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
+import org.springframework.context.MessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.context.request.WebRequest;
@@ -27,12 +28,14 @@ public class ReadableErrorAttributes implements ErrorAttributes, HandlerExceptio
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     private final DefaultErrorAttributes delegate;
+    private final MessageSource messageSource;
 
-    public ReadableErrorAttributes() {
-        this(false);
+    public ReadableErrorAttributes(MessageSource messageSource) {
+        this(messageSource, false);
     }
 
-    public ReadableErrorAttributes(boolean includeException) {
+    public ReadableErrorAttributes(MessageSource messageSource, boolean includeException) {
+    	this.messageSource = messageSource;
         this.delegate = new DefaultErrorAttributes(includeException);
     }
 
@@ -43,7 +46,13 @@ public class ReadableErrorAttributes implements ErrorAttributes, HandlerExceptio
 
         // TODO attributes, error 을 사용해서 message 속성을 읽기 좋은 문구로 가공한다.
         // TODO ex) attributes.put("message", "문구");
-
+        String defaultMessage = (String) attributes.get("message");
+        
+        String errorCode = String.format("Exception.%s", error.getClass().getSimpleName());
+        
+        String errorMessage = messageSource.getMessage(errorCode, new Object[0], defaultMessage, webRequest.getLocale());  
+        attributes.put("message", errorMessage);
+        
         return attributes;
     }
 
