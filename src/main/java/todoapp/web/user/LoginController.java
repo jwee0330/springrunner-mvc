@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import todoapp.core.user.application.UserJoinder;
 import todoapp.core.user.application.UserPasswordVerifier;
+import todoapp.core.user.domain.User;
 import todoapp.core.user.domain.UserEntityNotFoundException;
 import todoapp.core.user.domain.UserPasswordNotMatchedException;
+import todoapp.security.UserSession;
+import todoapp.security.UserSessionRepository;
+import todoapp.web.model.UserProfile;
 
 @Controller
 public class LoginController {
@@ -25,11 +29,12 @@ public class LoginController {
 	
 	private UserJoinder joinder;
 	private UserPasswordVerifier verifier;
-	private MessageSource messageSource;
+	private UserSessionRepository sessionRepository;
 	
-	public LoginController(UserJoinder joinder, UserPasswordVerifier verifier) {
+	public LoginController(UserJoinder joinder, UserPasswordVerifier verifier, UserSessionRepository sessionRepository) {
 		this.joinder = joinder;
 		this.verifier = verifier;
+		this.sessionRepository = sessionRepository;
 	}
 	
 	@GetMapping("/login")
@@ -47,11 +52,13 @@ public class LoginController {
 			return "login";
 		}
 		
+		User user;
 		try {
-			verifier.verify(loginCommand.getUsername(), loginCommand.getPassword());
+			user = verifier.verify(loginCommand.getUsername(), loginCommand.getPassword());
 		} catch(UserEntityNotFoundException error) {
-			joinder.join(loginCommand.getUsername(), loginCommand.getPassword());
+			user = joinder.join(loginCommand.getUsername(), loginCommand.getPassword());
 		}
+		sessionRepository.set(new UserSession(user));
 		
 		return "redirect:/todos";
 	}
