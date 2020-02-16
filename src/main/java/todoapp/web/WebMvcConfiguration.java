@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import todoapp.commons.web.view.CommaSeparatedValuesView;
 import todoapp.security.UserSessionRepository;
 import todoapp.security.web.method.UserSessionHandlerMethodArgumentResolver;
 import todoapp.security.web.servlet.RolesVerifyHandlerInterceptor;
+import todoapp.security.web.servlet.UserSessionFilter;
 
 /**
  * Spring Web MVC 설정
@@ -36,7 +38,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {		// TODO Auto-generated method stub
-		registry.addInterceptor(new RolesVerifyHandlerInterceptor(sessionRepository));
+		registry.addInterceptor(new RolesVerifyHandlerInterceptor());
 	}
 
 	@Override
@@ -50,6 +52,13 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 		// TODO Auto-generated method stub
 		resolvers.add(new UserSessionHandlerMethodArgumentResolver(sessionRepository));
 	}
+    
+    @Bean
+    public FilterRegistrationBean<UserSessionFilter> userSessionFilter() {
+        FilterRegistrationBean<UserSessionFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new UserSessionFilter(sessionRepository));
+        return registrationBean;
+    }
 
 	@Bean
     public ErrorAttributes errorAttributes(MessageSource messageSource) {

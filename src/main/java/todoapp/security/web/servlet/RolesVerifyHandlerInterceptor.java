@@ -30,11 +30,7 @@ public class RolesVerifyHandlerInterceptor implements HandlerInterceptor, RolesA
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
-    private UserSessionRepository sessionRepository;
     
-    public RolesVerifyHandlerInterceptor(UserSessionRepository sessionRepository) {
-		this.sessionRepository = sessionRepository;
-	}
 
 	@Override
     public final boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -45,8 +41,7 @@ public class RolesVerifyHandlerInterceptor implements HandlerInterceptor, RolesA
     		// 웹 요청을 보호할 필요가 있다면... (즉, 애노테이션 있다면...)
     		if (Objects.nonNull(rolesAllowed)) {
     			// 1. 로그인 되어 있는가?
-    			UserSession session = sessionRepository.get();
-    			if (Objects.isNull(session)) {
+    			if (Objects.isNull(request.getUserPrincipal())) {
     				// 로그인 되어 있지 않은 상태...
     				throw new UnauthorizedAccessException();
     			}
@@ -54,8 +49,9 @@ public class RolesVerifyHandlerInterceptor implements HandlerInterceptor, RolesA
     			// 2. 권한은 충분한가?
     			Set<String> matchedRoles = Stream
     					.of(rolesAllowed.value())
-    					.filter(role -> session.hasRole(role))
+    					.filter(role -> request.isUserInRole(role))
     					.collect(Collectors.toSet());
+    			
     			if (matchedRoles.isEmpty()) {
     				throw new AccessDeniedException();
     			}
