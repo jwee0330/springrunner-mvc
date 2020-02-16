@@ -26,6 +26,8 @@ public class UserService implements UserPasswordVerifier, UserJoinder, ProfilePi
     }
 
     public User verify(String username, String rawPassword) {
+    	
+    	System.out.println("11");
         return userRepository.findByUsername(username)
                              .orElseThrow(() -> new UserEntityNotFoundException(username))
                              .verifyPassword(passwordEncoder.encode(rawPassword));
