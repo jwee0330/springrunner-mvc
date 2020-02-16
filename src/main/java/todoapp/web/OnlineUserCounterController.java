@@ -23,7 +23,7 @@ public class OnlineUserCounterController {
         return broadcaster.subscribe();
     }
     
-    @GetMapping("/stream/online-users-counter")
+//    @GetMapping("/stream/online-users-counter")
     public void oldCounter(HttpServletResponse response) {
     	response.setCharacterEncoding("utf-8");
     	response.setContentType("text/event-stream");
