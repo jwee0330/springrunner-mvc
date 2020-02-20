@@ -38,7 +38,7 @@ public class RolesVerifyHandlerInterceptor implements HandlerInterceptor, RolesA
     		// 1. 핸들러 메소드에서 찾아보
     		RolesAllowed rolesAllowed = getRolesAllowed(handler);
     		
-    		// 웹 요청을 보호할 필요가 있다면... (즉, 애노테이션 있다면...)
+    		// 웹 요청을 보호할 필요가 있다면... (즉, @RolesAllowed 애노테이션 있다면...)
     		if (Objects.nonNull(rolesAllowed)) {
     			// 1. 로그인 되어 있는가?
     			if (Objects.isNull(request.getUserPrincipal())) {

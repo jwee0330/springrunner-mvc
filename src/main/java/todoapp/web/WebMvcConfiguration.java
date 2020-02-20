@@ -36,17 +36,26 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 		this.sessionRepository = sessionRepository;
 	}
 
+    /**
+     * 인터셉터 추가 
+     */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {		// TODO Auto-generated method stub
 		registry.addInterceptor(new RolesVerifyHandlerInterceptor());
 	}
 
+	/**
+	 * 뷰 리졸버 추가 
+	 */
 	@Override
     public void configureViewResolvers(ViewResolverRegistry registry) {
         // registry.enableContentNegotiation();
         // 위와 같이 직접 설정하면, 스프링부트가 구성한 ContentNegotiatingViewResolver 전략이 무시된다.
     }
     
+	/**
+	 * 핸들러 세션 핸들러메소드아규먼트 추가
+	 */
     @Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 		// TODO Auto-generated method stub
